@@ -8,13 +8,74 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/volatiletech/null/v8"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
+
+type createBuildingRequest struct {
+	Name    string `json:"name" binding:"required"`
+	Address string `json:"address" binding:"required"`
+}
 
 type BuildingResponse struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
 	Address string `json:"address"`
+}
+
+// @Summary Create or update a building
+// @Tags Building
+// @Description Create or update a building if already exists
+// @ID create-or-update-building
+// @Accept json
+// @Produce json
+// @Param input body createBuildingRequest true "building entity related data"
+// @Success 200 {object} BuildingResponse
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /buildings [post]
+func (s *Server) CreateBuilding(ctx *fiber.Ctx) error {
+	var requestBody createBuildingRequest
+
+	ctx.BodyParser(&requestBody)
+
+	building := models.Building{
+		Name:    requestBody.Name,
+		Address: null.String{String: requestBody.Address, Valid: true},
+	}
+
+	fetchedBuilding, err := models.Buildings(qm.Where("name=?", building.Name)).One(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err := building.Insert(ctx.Context(), s.store.GetDB(), boil.Infer())
+			if err != nil {
+				ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+				return nil
+			}
+		} else {
+			ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+			return err
+		}
+	} else {
+		building.ID = fetchedBuilding.ID
+		_, err := building.Update(ctx.Context(), s.store.GetDB(), boil.Infer())
+		if err != nil {
+			ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+			return err
+		}
+	}
+
+	err = fetchedBuilding.Reload(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	buildingResponse := mapToBuildingResponse(fetchedBuilding)
+	ctx.Status(http.StatusOK).JSON(buildingResponse)
+
+	return nil
 }
 
 // @Summary Get buildings

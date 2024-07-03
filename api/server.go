@@ -28,8 +28,7 @@ func NewServer(store db.Store) *Server {
 
 	app.Get("/buildings", server.GetAllBuildings)     // GET /buildings: List all buildings (with or without the apartments)
 	app.Get("/buildings/:id", server.GetBuildingById) // Get a single building by ID
-	// app.Post("/api/todos", controllers.CreateTodo)
-	// app.Patch("/api/todos/:id", controllers.ToggleTodoStatus)
+	app.Post("/buildings", server.CreateBuilding)
 	app.Delete("/buildings/:id", server.DeleteBuildingById) // Delete a building by ID
 
 	app.Get("/swagger/*", swagger.HandlerDefault)
