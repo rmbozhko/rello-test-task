@@ -44,8 +44,35 @@ paths:
             $ref: '#/definitions/api.ErrResponse'
       summary: Get buildings
       tags:
-      - Buildings
+      - Building
   /buildings/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific building by the specified id
+      operationId: delete-building-by-id
+      parameters:
+      - description: the specific building id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Delete building by id
+      tags:
+      - Building
     get:
       consumes:
       - application/json
@@ -74,5 +101,5 @@ paths:
             $ref: '#/definitions/api.ErrResponse'
       summary: Get building by id
       tags:
-      - building
+      - Building
 swagger: "2.0"

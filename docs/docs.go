@@ -22,7 +22,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Buildings"
+                    "Building"
                 ],
                 "summary": "Get buildings",
                 "operationId": "get-buildings",
@@ -61,7 +61,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "building"
+                    "Building"
                 ],
                 "summary": "Get building by id",
                 "operationId": "get-building-by-id",
@@ -80,6 +80,46 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/api.BuildingResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a specific building by the specified id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Building"
+                ],
+                "summary": "Delete building by id",
+                "operationId": "delete-building-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the specific building id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",

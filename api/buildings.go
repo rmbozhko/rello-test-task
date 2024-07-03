@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"rello-test-task/db/models"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -17,7 +18,7 @@ type BuildingResponse struct {
 }
 
 // @Summary Get buildings
-// @Tags Buildings
+// @Tags Building
 // @Description Get all buildings
 // @ID get-buildings
 // @Produce json
@@ -43,7 +44,7 @@ func (s *Server) GetAllBuildings(ctx *fiber.Ctx) error {
 }
 
 // @Summary Get building by id
-// @Tags building
+// @Tags Building
 // @Description Get a specific building by the specified id
 // @ID get-building-by-id
 // @Accept json
@@ -68,6 +69,46 @@ func (s *Server) GetBuildingById(ctx *fiber.Ctx) error {
 
 	buildingResponse := mapToBuildingResponse(building)
 	ctx.Status(http.StatusOK).JSON(buildingResponse)
+
+	return nil
+}
+
+// @Summary Delete building by id
+// @Tags Building
+// @Description Delete a specific building by the specified id
+// @ID delete-building-by-id
+// @Accept json
+// @Produce json
+// @Param id path string true "the specific building id"
+// @Success 200
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /buildings/{id} [delete]
+func (s *Server) DeleteBuildingById(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return nil
+	}
+
+	building, err := models.FindBuilding(ctx.Context(), s.store.GetDB(), i)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			ctx.Status(http.StatusNotFound).JSON(errorResponse(err))
+			return nil
+		}
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	_, err = building.Delete(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	ctx.Status(http.StatusOK)
 
 	return nil
 }

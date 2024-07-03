@@ -26,12 +26,13 @@ func NewServer(store db.Store) *Server {
 	server := &Server{store: store}
 	app := fiber.New()
 
-	app.Get("/buildings", server.GetAllBuildings) // GET /buildings: List all buildings (with or without the apartments)
-	app.Get("/buildings/:id", server.GetBuildingById)
+	app.Get("/buildings", server.GetAllBuildings)     // GET /buildings: List all buildings (with or without the apartments)
+	app.Get("/buildings/:id", server.GetBuildingById) // Get a single building by ID
 	// app.Post("/api/todos", controllers.CreateTodo)
 	// app.Patch("/api/todos/:id", controllers.ToggleTodoStatus)
-	// app.Delete("/api/todos/:id", controllers.DeleteTodo)
-	app.Get("/swagger/*", swagger.HandlerDefault) // default
+	app.Delete("/buildings/:id", server.DeleteBuildingById) // Delete a building by ID
+
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	server.app = app
 	return server
