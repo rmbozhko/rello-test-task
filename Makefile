@@ -10,4 +10,13 @@ migratedown:
 server:
 	go run cmd/main.go
 
-.PHONY: migratecreate migrateup migratedown server
+sqlboiler:
+	docker run --rm -it -v $(PWD)/sqlboiler.toml:/sqlboiler.toml:ro -v $(PWD)/db/models:/models:rw --network host goodwithtech/sqlboiler:latest --wipe /sqlboiler-psql --output models/gen
+
+swag:
+	${HOME}/go/bin/swag init -d cmd,api
+
+# sqlboiler2:
+# docker run --rm -v $(PWD)/sqlboiler.toml:/sqlboiler.toml -v $(PWD)/db/models:/models curvegrid/sqlboiler:latest psql
+
+.PHONY: migratecreate migrateup migratedown server sqlboiler swag

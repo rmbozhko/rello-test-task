@@ -1,0 +1,78 @@
+basePath: /
+definitions:
+  api.BuildingResponse:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  api.ErrResponse:
+    properties:
+      error:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: REST API to manage buildings and apartments
+  title: Rello Test Task
+  version: 0.0.1
+paths:
+  /buildings:
+    get:
+      description: Get all buildings
+      operationId: get-buildings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.BuildingResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Get buildings
+      tags:
+      - Buildings
+  /buildings/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific building by the specified id
+      operationId: get-building-by-id
+      parameters:
+      - description: the specific building id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.BuildingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Get building by id
+      tags:
+      - building
+swagger: "2.0"

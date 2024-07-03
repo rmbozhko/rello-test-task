@@ -8,6 +8,9 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 
+	"rello-test-task/api"
+	"rello-test-task/db"
+
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
@@ -25,12 +28,19 @@ func main() {
 		log.Fatal("cannot load config", err)
 	}
 
-	_, err = sql.Open(config.DBDriver, config.DBSource)
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("failed to connect to database")
 	}
 
 	runDBMigration(config.MigrationURL, config.DBSource)
+
+	store := db.NewStore(conn)
+	server := api.NewServer(store)
+
+	if err = server.Start(config.ServerAddress); err != nil {
+		log.Fatal("Cannot start the server at the address {}:\n{}", config.ServerAddress, err)
+	}
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
