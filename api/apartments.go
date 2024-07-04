@@ -8,6 +8,8 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/volatiletech/null/v8"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
@@ -16,6 +18,69 @@ type ApartmentResponse struct {
 	Number   string `json:"number"`
 	Floor    int    `json:"floor"`
 	SQMeters int    `json:"sq_meters"`
+}
+
+type createApartmentRequest struct {
+	Number     string `json:"number" binding:"required"`
+	Floor      int    `json:"floor" binding:"required"`
+	SQMeters   int    `json:"sq_meters" binding:"required"`
+	BuildingID int    `json:"building_id" binding:"required"`
+}
+
+// @Summary Create or update a apartment
+// @Tags Apartment
+// @Description Create or update a apartment if already exists
+// @ID create-or-update-apartment
+// @Accept json
+// @Produce json
+// @Param input body createApartmentRequest true "apartment entity related data"
+// @Success 200 {object} ApartmentResponse
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /apartments [post]
+func (s *Server) CreateApartment(ctx *fiber.Ctx) error {
+	var requestBody createApartmentRequest
+
+	ctx.BodyParser(&requestBody)
+
+	apartment := models.Apartment{
+		Number:     null.String{String: requestBody.Number, Valid: true},
+		Floor:      null.Int{Int: requestBody.Floor, Valid: true},
+		SQMeters:   null.Int{Int: requestBody.SQMeters, Valid: true},
+		BuildingID: requestBody.BuildingID,
+	}
+
+	fetchedApartment, err := models.Apartments(qm.Where("number=? and building_id=?", apartment.Number, apartment.BuildingID)).One(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err := apartment.Insert(ctx.Context(), s.store.GetDB(), boil.Infer())
+			if err != nil {
+				ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+				return nil
+			}
+		} else {
+			ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+			return err
+		}
+	} else {
+		apartment.ID = fetchedApartment.ID
+		_, err := apartment.Update(ctx.Context(), s.store.GetDB(), boil.Infer())
+		if err != nil {
+			ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+			return err
+		}
+	}
+
+	err = fetchedApartment.Reload(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	apartmentResponse := mapToApartmentResponse(fetchedApartment)
+	ctx.Status(http.StatusOK).JSON(apartmentResponse)
+
+	return nil
 }
 
 // @Summary Get apartments

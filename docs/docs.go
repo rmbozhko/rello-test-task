@@ -49,6 +49,51 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Create or update a apartment if already exists",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Apartment"
+                ],
+                "summary": "Create or update a apartment",
+                "operationId": "create-or-update-apartment",
+                "parameters": [
+                    {
+                        "description": "apartment entity related data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.createApartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.ApartmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    }
+                }
             }
         },
         "/apartments/{id}": {
@@ -340,6 +385,29 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "type": "string"
+                }
+            }
+        },
+        "api.createApartmentRequest": {
+            "type": "object",
+            "required": [
+                "building_id",
+                "floor",
+                "number",
+                "sq_meters"
+            ],
+            "properties": {
+                "building_id": {
+                    "type": "integer"
+                },
+                "floor": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "sq_meters": {
+                    "type": "integer"
                 }
             }
         },

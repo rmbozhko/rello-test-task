@@ -34,7 +34,7 @@ func NewServer(store db.Store) *Server {
 	app.Get("/apartments", server.GetAllApartments)     // 	GET /apartments: List all apartments
 	app.Get("/apartments/:id", server.GetApartmentById) // GET /apartments/{id}: Get a single apartment by ID
 	// GET /apartments/building/{buildingId}: Get all apartments in a specific building
-	// POST /apartments: Create a new apartment (update if already exist)
+	app.Post("/apartments", server.CreateApartment)           // POST /apartments: Create a new apartment (update if already exist)
 	app.Delete("/apartments/:id", server.DeleteApartmentById) // DELETE /apartments/{id}: Delete an apartment by ID
 
 	app.Get("/swagger/*", swagger.HandlerDefault)

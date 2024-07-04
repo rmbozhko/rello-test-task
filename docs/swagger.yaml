@@ -25,6 +25,22 @@ definitions:
       error:
         type: string
     type: object
+  api.createApartmentRequest:
+    properties:
+      building_id:
+        type: integer
+      floor:
+        type: integer
+      number:
+        type: string
+      sq_meters:
+        type: integer
+    required:
+    - building_id
+    - floor
+    - number
+    - sq_meters
+    type: object
   api.createBuildingRequest:
     properties:
       address:
@@ -64,6 +80,36 @@ paths:
           schema:
             $ref: '#/definitions/api.ErrResponse'
       summary: Get apartments
+      tags:
+      - Apartment
+    post:
+      consumes:
+      - application/json
+      description: Create or update a apartment if already exists
+      operationId: create-or-update-apartment
+      parameters:
+      - description: apartment entity related data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.createApartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ApartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Create or update a apartment
       tags:
       - Apartment
   /apartments/{id}:
