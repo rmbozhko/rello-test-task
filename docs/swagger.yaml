@@ -169,6 +169,36 @@ paths:
       summary: Get apartment by id
       tags:
       - Apartment
+  /apartments/building/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all apartments by the specified building id
+      operationId: get-apartment-by-building-id
+      parameters:
+      - description: the specific building id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ApartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ErrResponse'
+      summary: Get all apartments by building id
+      tags:
+      - Apartment
   /buildings:
     get:
       description: Get all buildings

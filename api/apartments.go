@@ -95,10 +95,6 @@ func (s *Server) CreateApartment(ctx *fiber.Ctx) error {
 func (s *Server) GetAllApartments(ctx *fiber.Ctx) error {
 	apartments, err := models.Apartments().All(ctx.Context(), s.store.GetDB())
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			ctx.Status(http.StatusNotFound).JSON(errorResponse(err))
-			return err
-		}
 		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
 		return err
 	}
@@ -135,6 +131,36 @@ func (s *Server) GetApartmentById(ctx *fiber.Ctx) error {
 
 	apartmentResponse := mapToApartmentResponse(apartment)
 	ctx.Status(http.StatusOK).JSON(apartmentResponse)
+
+	return nil
+}
+
+// @Summary Get all apartments by building id
+// @Tags Apartment
+// @Description Get all apartments by the specified building id
+// @ID get-apartment-by-building-id
+// @Accept json
+// @Produce json
+// @Param id path string true "the specific building id"
+// @Success 200 {object} ApartmentResponse
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /apartments/building/{id} [get]
+func (s *Server) GetAllApartmentsByBuildingId(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	apartments, err := models.Apartments(qm.Where("building_id=?", id)).All(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			ctx.Status(http.StatusNotFound).JSON(errorResponse(err))
+			return err
+		}
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	apartmentsResponse := mapToApartmentsResponse(apartments)
+	ctx.Status(http.StatusOK).JSON(apartmentsResponse)
 
 	return nil
 }

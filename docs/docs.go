@@ -96,6 +96,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/apartments/building/{id}": {
+            "get": {
+                "description": "Get all apartments by the specified building id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Apartment"
+                ],
+                "summary": "Get all apartments by building id",
+                "operationId": "get-apartment-by-building-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the specific building id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.ApartmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/apartments/{id}": {
             "get": {
                 "description": "Get a specific apartment by the specified id",
