@@ -31,8 +31,8 @@ func NewServer(store db.Store) *Server {
 	app.Post("/buildings", server.CreateBuilding)
 	app.Delete("/buildings/:id", server.DeleteBuildingById) // Delete a building by ID
 
-	app.Get("/apartments", server.GetAllApartments) // 	GET /apartments: List all apartments
-	// GET /apartments/{id}: Get a single apartment by ID
+	app.Get("/apartments", server.GetAllApartments)     // 	GET /apartments: List all apartments
+	app.Get("/apartments/:id", server.GetApartmentById) // GET /apartments/{id}: Get a single apartment by ID
 	// GET /apartments/building/{buildingId}: Get all apartments in a specific building
 	// POST /apartments: Create a new apartment (update if already exist)
 	// DELETE /apartments/{id}: Delete an apartment by ID

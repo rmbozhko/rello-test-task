@@ -45,6 +45,51 @@
                 }
             }
         },
+        "/apartments/{id}": {
+            "get": {
+                "description": "Get a specific apartment by the specified id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Apartment"
+                ],
+                "summary": "Get apartment by id",
+                "operationId": "get-apartment-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the specific apartment id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.ApartmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/buildings": {
             "get": {
                 "description": "Get all buildings",
