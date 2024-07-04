@@ -88,6 +88,46 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Delete a specific apartment by the specified id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Apartment"
+                ],
+                "summary": "Delete apartment by id",
+                "operationId": "delete-apartment-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the specific apartment id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    }
+                }
             }
         },
         "/buildings": {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"rello-test-task/db/models"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -69,6 +70,46 @@ func (s *Server) GetApartmentById(ctx *fiber.Ctx) error {
 
 	apartmentResponse := mapToApartmentResponse(apartment)
 	ctx.Status(http.StatusOK).JSON(apartmentResponse)
+
+	return nil
+}
+
+// @Summary Delete apartment by id
+// @Tags Apartment
+// @Description Delete a specific apartment by the specified id
+// @ID delete-apartment-by-id
+// @Accept json
+// @Produce json
+// @Param id path string true "the specific apartment id"
+// @Success 200
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /apartments/{id} [delete]
+func (s *Server) DeleteApartmentById(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return nil
+	}
+
+	apartment, err := models.FindApartment(ctx.Context(), s.store.GetDB(), i)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			ctx.Status(http.StatusNotFound).JSON(errorResponse(err))
+			return nil
+		}
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	_, err = apartment.Delete(ctx.Context(), s.store.GetDB())
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
+		return err
+	}
+
+	ctx.Status(http.StatusOK)
 
 	return nil
 }
