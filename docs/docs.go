@@ -15,6 +15,42 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/apartments": {
+            "get": {
+                "description": "Get all apartments",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Apartment"
+                ],
+                "summary": "Get apartments",
+                "operationId": "get-apartments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.ApartmentResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/buildings": {
             "get": {
                 "description": "Get all buildings",
@@ -183,6 +219,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "api.ApartmentResponse": {
+            "type": "object",
+            "properties": {
+                "floor": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "sq_meters": {
+                    "type": "integer"
+                }
+            }
+        },
         "api.BuildingResponse": {
             "type": "object",
             "properties": {
