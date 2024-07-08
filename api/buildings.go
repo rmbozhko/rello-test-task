@@ -44,7 +44,6 @@ func (s *Server) CreateBuilding(ctx *fiber.Ctx) error {
 		Name:    requestBody.Name,
 		Address: null.String{String: requestBody.Address, Valid: true},
 	}
-
 	fetchedBuilding, err := models.Buildings(qm.Where("name=?", building.Name)).One(ctx.Context(), s.store.GetDB())
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -66,7 +65,7 @@ func (s *Server) CreateBuilding(ctx *fiber.Ctx) error {
 		}
 	}
 
-	err = fetchedBuilding.Reload(ctx.Context(), s.store.GetDB())
+	fetchedBuilding, err = models.Buildings(qm.Where("name=?", building.Name)).One(ctx.Context(), s.store.GetDB())
 	if err != nil {
 		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
 		return err

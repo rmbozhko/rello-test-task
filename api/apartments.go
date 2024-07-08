@@ -71,7 +71,7 @@ func (s *Server) CreateApartment(ctx *fiber.Ctx) error {
 		}
 	}
 
-	err = fetchedApartment.Reload(ctx.Context(), s.store.GetDB())
+	fetchedApartment, err = models.Apartments(qm.Where("number=? and building_id=?", apartment.Number, apartment.BuildingID)).One(ctx.Context(), s.store.GetDB())
 	if err != nil {
 		ctx.Status(http.StatusInternalServerError).JSON(errorResponse(err))
 		return err
