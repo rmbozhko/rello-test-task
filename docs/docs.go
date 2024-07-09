@@ -397,6 +397,9 @@ const docTemplate = `{
         "api.ApartmentResponse": {
             "type": "object",
             "properties": {
+                "building_id": {
+                    "type": "integer"
+                },
                 "floor": {
                     "type": "integer"
                 },

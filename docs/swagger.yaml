@@ -2,6 +2,8 @@ basePath: /
 definitions:
   api.ApartmentResponse:
     properties:
+      building_id:
+        type: integer
       floor:
         type: integer
       id:

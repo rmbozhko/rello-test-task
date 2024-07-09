@@ -14,10 +14,11 @@ import (
 )
 
 type ApartmentResponse struct {
-	ID       int    `json:"id"`
-	Number   string `json:"number"`
-	Floor    int    `json:"floor"`
-	SQMeters int    `json:"sq_meters"`
+	ID         int    `json:"id"`
+	Number     string `json:"number"`
+	Floor      int    `json:"floor"`
+	SQMeters   int    `json:"sq_meters"`
+	BuildingID int    `json:"building_id"`
 }
 
 type createApartmentRequest struct {
@@ -216,12 +217,11 @@ func mapToApartmentsResponse(apartments models.ApartmentSlice) []ApartmentRespon
 }
 
 func mapToApartmentResponse(apartment *models.Apartment) ApartmentResponse {
-
-	ApartmentResponse := ApartmentResponse{
-		ID:       int(apartment.ID),
-		Number:   apartment.Number.String,
-		Floor:    apartment.Floor.Int,
-		SQMeters: apartment.SQMeters.Int,
+	return ApartmentResponse{
+		ID:         int(apartment.ID),
+		Number:     apartment.Number.String,
+		Floor:      apartment.Floor.Int,
+		SQMeters:   apartment.SQMeters.Int,
+		BuildingID: apartment.BuildingID,
 	}
-	return ApartmentResponse
 }
