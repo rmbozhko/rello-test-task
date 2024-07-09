@@ -16,7 +16,10 @@ sqlboiler:
 swag:
 	${HOME}/go/bin/swag init -d cmd,api
 
+test:
+	go test -v -cover ./...
+
 # sqlboiler2:
 # docker run --rm -v $(PWD)/sqlboiler.toml:/sqlboiler.toml -v $(PWD)/db/models:/models curvegrid/sqlboiler:latest psql
 
-.PHONY: migratecreate migrateup migratedown server sqlboiler swag
+.PHONY: migratecreate migrateup migratedown server sqlboiler swag test
